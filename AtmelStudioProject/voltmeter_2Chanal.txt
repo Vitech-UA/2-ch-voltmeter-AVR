@@ -1,0 +1,64 @@
+#include <mega8.h>
+#include <delay.h>
+#include <alcd.h>
+
+
+#define ADC_VREF_TYPE ((0<<REFS1) | (0<<REFS0) | (0<<ADLAR))
+
+unsigned int read_adc(unsigned char adc_input)
+{
+ADMUX=adc_input | ADC_VREF_TYPE;
+// Delay needed for the stabilization of the ADC input voltage
+delay_us(10);
+// Start the AD conversion
+ADCSRA|=(1<<ADSC);
+// Wait for the AD conversion to complete
+while ((ADCSRA & (1<<ADIF))==0);
+ADCSRA|=(1<<ADIF);
+return ADCW;
+}
+
+void main(void)
+{
+ 
+DDRB=0xFF;
+PORTB=0x00;
+
+
+DDRC=0x00;
+PORTC=0x00;
+
+
+DDRD=0x00;
+PORTD=0x00;
+
+
+
+// ADC initialization
+// ADC Clock frequency: 250,000 kHz
+// ADC Voltage Reference: AREF pin
+ADMUX=ADC_VREF_TYPE;
+ADCSRA=(1<<ADEN) | (0<<ADSC) | (0<<ADFR) | (0<<ADIF) | (0<<ADIE) | (1<<ADPS2) | (0<<ADPS1) | (1<<ADPS0);
+SFIOR=(0<<ACME);
+
+
+
+// Alphanumeric LCD initialization
+// Connections are specified in the
+// Project|Configure|C Compiler|Libraries|Alphanumeric LCD menu:
+// RS - PORTB Bit 0
+// RD - PORTB Bit 1
+// EN - PORTB Bit 2
+// D4 - PORTB Bit 3
+// D5 - PORTB Bit 4
+// D6 - PORTB Bit 5
+// D7 - PORTB Bit 6
+// Characters/line: 8
+lcd_init(8);
+
+while (1)
+      {
+       
+
+      }
+}
